@@ -5,7 +5,8 @@ const errorHandler = require("./middleware/errorHandler");
 const cors = require("cors");
 
 // env file config
-const dotenv = require("dotenv").config();
+const dotenv = require("dotenv");
+dotenv.config();
 
 connectDb();
 const app = express();
