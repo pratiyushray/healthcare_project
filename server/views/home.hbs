@@ -1,13 +1,24 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
 </head>
+
 <body>
     {{> header username=.}}
     <h1>This is my home page</h1>
     {{username}}
+
+    <div>
+        <form action="/blogs" method="post" enctype="multipart/form-data">
+           <input type="text" name="title" id="">
+            <input type="file" name="blogimage" />
+            <input type="submit" value="Upload" >
+        </form>
+    </div>
 </body>
+
 </html>
