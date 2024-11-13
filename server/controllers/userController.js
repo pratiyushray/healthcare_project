@@ -26,15 +26,20 @@ const registerUser = asyncHandler(async (req, res) => {
   const salt = await bcrypt.genSalt(10);
   const hashedPassword = await bcrypt.hash(password, salt);
 
-  // Create the user
-  const user = await User.create({
-    name,
-    email,
-    phoneNumber,
-    password: hashedPassword,
-  });
+  try {
+    // Create the user
+    const user = await User.create({
+      name,
+      email,
+      phoneNumber,
+      password: hashedPassword,
+    });
 
-  res.status(201).json({ message: "User registered successfully", user });
+    res.status(201).json({ message: "User registered successfully", user });
+  } catch (err) {
+    console.error("Registration Error:", err.message);
+    res.status(500).json({ message: "Error registering user" });
+  }
 });
 
 // @desc    Authenticate user
@@ -58,7 +63,6 @@ const loginUser = asyncHandler(async (req, res) => {
     // Send the token in the Authorization header
     res.setHeader('Authorization', `Bearer ${token}`);
 
-    // Optionally, you can send other user information in the response body as well
     return res.json({
       _id: user._id,
       name: user.name,
@@ -71,8 +75,72 @@ const loginUser = asyncHandler(async (req, res) => {
   }
 });
 
+// @desc    Get user profile
+// @route   GET /api/user/profile
+// @access  Private
+const getUserProfile = asyncHandler(async (req, res) => {
+  const user = await User.findById(req.user.id);
+
+  if (user) {
+    // Avoid sending password in the response for security reasons
+    res.json({
+      _id: user._id,
+      name: user.name,
+      email: user.email,
+      phoneNumber: user.phoneNumber,
+      password:user.password
+    });
+  } else {
+    return res.status(404).json({ message: "User not found" });
+  }
+});
+
+// @desc    Update user profile
+// @route   PUT /api/user/profile
+// @access  Private (Only logged-in users can update their profile)
+const updateUserProfile = asyncHandler(async (req, res) => {
+  const { name, email, phoneNumber, password } = req.body;
+
+  // Check if the user exists
+  const user = await User.findById(req.user.id);
+
+  if (!user) {
+    return res.status(404).json({ message: "User not found" });
+  }
+
+  // Update only the fields the user has provided
+  if (name) user.name = name;
+  if (email) user.email = email;
+  if (phoneNumber) user.phoneNumber = phoneNumber;
+
+  // If a new password is provided, hash it before saving
+  if (password) {
+    const salt = await bcrypt.genSalt(10);
+    user.password = await bcrypt.hash(password, salt);
+  }
+
+  try {
+    // Save the updated user profile to the database
+    const updatedUser = await user.save();
+
+    // Send the updated user info in the response, excluding the password
+    res.json({
+      _id: updatedUser._id,
+      name: updatedUser.name,
+      email: updatedUser.email,
+      phoneNumber: updatedUser.phoneNumber,
+
+    });
+  } catch (err) {
+    console.error("Error updating profile:", err.message);
+    res.status(500).json({ message: "Error updating profile" });
+  }
+});
+
 // Export all controller functions
 module.exports = {
   registerUser,
-  loginUser
+  loginUser,
+  getUserProfile,
+  updateUserProfile
 };

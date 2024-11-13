@@ -1,0 +1,26 @@
+REGISTER
+
+{
+  "name": "Pratiyush",
+  "email":"pratiyushray@gmail.com",
+  "password":"qwertyuiop",
+  "phoneNumber":"2873872136"
+}
+
+LOGIN
+
+{
+
+  "email":"pratiyushray@gmail.com",
+  "password":"qwertyuiop",
+
+}
+PUT USER PROFILE DATA
+
+{
+  "name": "Pratiyush",
+  "email":"pratiyushray@gmail.com",
+  "password":"qwertyuiop",
+  "phoneNumber":"2873872136"
+}
+

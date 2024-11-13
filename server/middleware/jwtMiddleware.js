@@ -1,9 +1,11 @@
 const jwt = require('jsonwebtoken');
+require('dotenv').config();  // Ensure this is loaded for environment variables
 
 // Constants for JWT configuration
-const JWT_SECRET = "qwertyuiop"; // Make sure this is properly set in .env
+const JWT_SECRET = process.env.JWT_SECRET; // Securely load from environment variables
 const TOKEN_EXPIRY = '24h'; // Token expiry time
 
+// Middleware to authenticate using JWT
 const jwtAuthMiddleware = (req, res, next) => {
     try {
         // Check for Authorization header
@@ -32,14 +34,14 @@ const jwtAuthMiddleware = (req, res, next) => {
             });
         }
 
-        // Verify the token
+        // Verify the token using the secret and specified algorithm
         const decoded = jwt.verify(token, JWT_SECRET, {
             algorithms: ['HS256'] // Explicitly specify the algorithm
         });
 
-        // Attach user information to request
+        // Attach decoded user information to request
         req.user = decoded;
-        next();
+        next(); // Proceed to the next middleware or route handler
 
     } catch (error) {
         console.error('JWT Verification Error:', error.name, error.message);
@@ -72,12 +74,12 @@ const generateToken = (userData) => {
     try {
         // Ensure JWT_SECRET is available
         if (!JWT_SECRET) {
-            throw new Error('JWT_SECRET is not configured');
+            throw new Error('JWT_SECRET is not configured in environment variables');
         }
 
-        // Generate token with expiration
+        // Generate token with user data and expiration
         return jwt.sign(
-            userData,
+            { id: userData._id, name: userData.name, email: userData.email }, // Only send necessary info (avoid sending sensitive data like password)
             JWT_SECRET,
             {
                 expiresIn: TOKEN_EXPIRY,
