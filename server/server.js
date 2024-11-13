@@ -50,6 +50,8 @@ app.use(cors());
 // Route for User Registration and Authentication
 app.use("/api/user", require("./routes/userRoutes"));
 
+//Route for Newsletter - Newsletter is kind of Blog
+app.use("/api/newsletter",require("./routes/newsletterRoutes"))
 
 app.use("/api/doctor", require("./routes/doctorsDetails"));
 
