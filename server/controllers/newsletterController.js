@@ -9,6 +9,7 @@ const getNewsletter= asyncHandler(async(req,res)=>{
     try{
         const data=await Newsletter.find({});
         
+        
     }catch(err){
         return res.status(404).json({err:err.message})
     }

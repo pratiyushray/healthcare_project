@@ -18,10 +18,10 @@ router.post("/register", registerUser); // This is fine for public registration
 // Route for user login (Public route)
 router.post("/login", loginUser); // This is fine for public login
 
-// Route for getting the current user's profile (Protected route)
-router.get("/profile", jwtAuthMiddleware, getUserProfile); // Ensures only authenticated users can access their profile
+//Route for Get the user specific data
+router.get("/myaccount",jwtAuthMiddleware,getUserProfile)
 
-// Route for updating the user's profile (Protected route)
-router.put("/profile", jwtAuthMiddleware, updateUserProfile); // Ensures only authenticated users can update their profile
+//Route for Updating the user specific data.
+router.patch("/myaccount",jwtAuthMiddleware,updateUserProfile)
 
 module.exports = router;
